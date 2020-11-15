@@ -15,17 +15,28 @@
  */
 package com.diffplug.spotless.maven;
 
+import static com.diffplug.spotless.FileSignature.machineIsWin;
+
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 
 public class SpecificFilesTest extends MavenIntegrationHarness {
 	private String testFile(int number, boolean absolute) throws IOException {
 		String rel = "src/main/java/test" + number + ".java";
+		Path path;
 		if (absolute) {
-			return rootFolder() + "/" + rel;
+			path = Paths.get(rootFolder().getAbsolutePath(), rel);
 		} else {
-			return rel;
+			path = Paths.get(rel);
+		}
+		String result = path.toString();
+		if (!machineIsWin()) {
+			return result;
+		} else {
+			return result.replace("\\", "\\\\");
 		}
 	}
 
@@ -73,6 +84,11 @@ public class SpecificFilesTest extends MavenIntegrationHarness {
 
 	@Test
 	public void regexp() throws IOException, InterruptedException {
-		integration(".*/src/main/java/test\\(1\\|3\\).java", true, false, true);
+		String pattern;
+		if (machineIsWin())
+			pattern = "\".*\\\\src\\\\main\\\\java\\\\test(1|3).java\"";
+		else
+			pattern = "'.*/src/main/java/test(1|3).java'";
+		integration(pattern, true, false, true);
 	}
 }

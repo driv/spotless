@@ -124,8 +124,8 @@ public class GroovyExtension extends FormatExtension implements HasBuiltinDelimi
 		} else if (excludeJava) {
 			throw new IllegalArgumentException("'excludeJava' is not supported in combination with a custom 'target'.");
 		}
-		// LicenseHeaderStep completely blows apart package-info.java/groovy - this common-sense check
-		// ensures that it skips both. See https://github.com/diffplug/spotless/issues/1
+//      LicenseHeaderStep completely blows apart package-info.java/groovy - this common-sense check
+//      ensures that it skips both. See https://github.com/diffplug/spotless/issues/1
 		steps.replaceAll(step -> {
 			if (LicenseHeaderStep.name().equals(step.getName())) {
 				return step.filterByFile(LicenseHeaderStep.unsupportedJvmFilesFilter());
